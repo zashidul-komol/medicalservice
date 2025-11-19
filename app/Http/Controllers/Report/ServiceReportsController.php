@@ -89,6 +89,7 @@ class ServiceReportsController extends Controller {
         $organizations = Organization::pluck('short_name','id');
         $ChiefComplains = ChiefComplain::pluck('name','id');
 
+		$employee_types = [];
         $reportData = [];
         $is_download = 0;
 
