@@ -177,13 +177,13 @@
                     <table >
                         @foreach ($MedicineDetails as $key=>$data)
                           <tr>
-                            <td align="left" width="30%">{{ $data->medicine_name or '' }}</td>
-                            <td align="left" width="20%">{{$data->medicine_duration or ''}}</td>
+                            <td align="left" width="30%">{{ $data->medicine_name ?? '' }}</td>
+                            <td align="left" width="20%">{{$data->medicine_duration ?? ''}}</td>
                             
                           </tr>
                           <tr>
-                            <td align="left" width="20%">{{$data->when_take_medicine or ''}}</td>
-                            <td align="left" width="30%">{{ $data->suggetions or '' }}</td>
+                            <td align="left" width="20%">{{$data->when_take_medicine ?? ''}}</td>
+                            <td align="left" width="30%">{{ $data->suggetions ?? '' }}</td>
                             
                           </tr>
                         @endforeach

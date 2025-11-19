@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Sugestion;
+use App\Models\Sugestion;
 use Illuminate\Http\Request;
 
 class SugestionsController extends Controller {
@@ -71,12 +71,12 @@ class SugestionsController extends Controller {
 	 */
 	public function update(Request $request, $id) {
 		$data = $request->except('_method', '_token');
-		$request->validate([
+		$validated = $request->validate([
 			'name' => 'required|unique:sugestions,name,' . $id,
 			'status' => 'required',
 		]);
 
-		$sugestions = Sugestion::where('id', $id)->update($data);
+		$sugestions = Sugestion::whereKey($id)->update($validated);
 		if ($sugestions) {
 			$message = "You have successfully updated";
 			return redirect()->route('sugestions.index', [])

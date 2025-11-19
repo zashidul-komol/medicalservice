@@ -27,9 +27,9 @@
                     @endif
                     {!! $errors->first('avatar', '<p class="text-danger">:message</p>' ) !!}
 
-                    <h5 class="profile-username text-center">{{$employees->name or ''}}</h5>
+                    <h5 class="profile-username text-center">{{$employees->name ?? ''}}</h5>
 
-                    <p class="text-muted text-center">{{$employees->designation->title or ''}}</p>
+                    <p class="text-muted text-center">{{$employees->designation->title ?? ''}}</p>
 
                   </div>
             <!-- /.box-body -->
@@ -106,11 +106,11 @@
     </div>
 @section('vuescript')
 <script>
-    laravelObj.division_id='{{ $employees[0]->division_id or '' }}';
-    laravelObj.districts =JSON.parse('{!! $districts or '' !!}');
-    laravelObj.district_id='{{ $employees[0]->district_id or '' }}';
-    laravelObj.thanas =JSON.parse('{!! $thanas or '' !!}');
-    laravelObj.thana_id ='{{ $employees[0]->thana_id or '' }}';
+    laravelObj.division_id='{{ $employees[0]->division_id ?? '' }}';
+    laravelObj.districts =JSON.parse('{!! $districts ?? '' !!}');
+    laravelObj.district_id='{{ $employees[0]->district_id ?? '' }}';
+    laravelObj.thanas =JSON.parse('{!! $thanas ?? '' !!}');
+    laravelObj.thana_id ='{{ $employees[0]->thana_id ?? '' }}';
 </script>
 @stop
     <div class="col-sm-5">

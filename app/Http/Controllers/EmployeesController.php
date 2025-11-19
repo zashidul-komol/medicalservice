@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Employee;
-use App\ChildDetail;
-use App\FamilyDetail;
-use App\Location;
-use App\Department;
-use App\Designation;
-use App\Organization;
-use App\Participation;
-use App\BusinessMeet;
-use App\OfficeLocation;
-use App\Region;
+use App\Models\Employee;
+use App\Models\ChildDetail;
+use App\Models\FamilyDetail;
+use App\Models\Location;
+use App\Models\Department;
+use App\Models\Designation;
+use App\Models\Organization;
+use App\Models\Participation;
+use App\Models\BusinessMeet;
+use App\Models\OfficeLocation;
+use App\Models\Region;
 use App\Exports\EmployeeExport;
 use App\Exports\ParticipantExport;
 use App\Exports\ChildParticipantExport;
@@ -31,7 +31,7 @@ class EmployeesController extends Controller
      */
     public function index()
     {
-        $user = \App\User::find(auth()->id());
+        $user = \App\Models\User::find(auth()->id());
         //dd($user->toArray());
         $Organization_id = $user['organization_id'];
         //dd($Organization_id);
@@ -185,11 +185,20 @@ class EmployeesController extends Controller
         //$employees = $employees[0];
         //dd($employees->toArray());
         //$employees = $employees->child_details[0];
+        $divisionId = $employees[0]->division_id ?? null;
+		if ($divisionId && is_array($divisionId)) {
+			$divisionId = $divisionId[0];
+		}
+
+		$districtId = $employees[0]->district_id ?? null;
+		if ($districtId && is_array($districtId)) {
+			$districtId = $districtId[0];
+		}
         $divisions = Location::whereNull('parent_id')->pluck('name', 'id');
         //dd($divisions->toArray());
-        $districts = Location::where('parent_id', $employees[0]->division_id[0])->pluck('name', 'id');
+        $districts = Location::where('parent_id', $divisionId)->pluck('name', 'id');
         //dd($districts);
-        $thanas = Location::where('parent_id', $employees[0]->district_id[0])->pluck('name', 'id');
+        $thanas = Location::where('parent_id', $districtId)->pluck('name', 'id');
         //dd($thanas);
         $departments = Department::pluck('name','id');
         $designations = Designation::pluck('title','id');
@@ -320,12 +329,12 @@ class EmployeesController extends Controller
     {
         $data = $request->except('_method', '_token');
         //dd($data);
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|unique:employees,name,' . $id,
             'status' => 'required',
         ]);
 
-        $employees = Employee::where('id', $id)->update($data);
+        $employees = Employee::whereKey($id)->update($validated);
         if ($employees) {
             $message = "You have successfully updated";
             return redirect()->route('employees.index', [])
@@ -878,7 +887,7 @@ class EmployeesController extends Controller
 
     public function totalparticipantlist()
     {
-        $user = \App\User::find(auth()->id());
+        $user = \App\Models\User::find(auth()->id());
         //dd($user->toArray());
         $Organization_id = $user['organization_id'];
         //dd($Organization_id);

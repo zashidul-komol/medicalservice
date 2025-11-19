@@ -1,20 +1,20 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\DfReturnLog;
-use App\Location;
-use App\Employee;
-use App\Appointment;
-use App\Medicine;
-use App\RequisitionLog;
-use App\Shop;
-use App\SmsPromotional;
+use App\Models\DfReturnLog;
+use App\Models\Location;
+use App\Models\Employee;
+use App\Models\Appointment;
+use App\Models\Medicine;
+use App\Models\RequisitionLog;
+use App\Models\Shop;
+use App\Models\SmsPromotional;
 use App\Traits\AjaxForInventory;
 use App\Traits\AjaxForReport;
 use App\Traits\AjaxForRequisition;
 use App\Traits\AjaxForReturn;
 use App\Traits\AjaxForService;
-use App\Zone;
+use App\Models\Zone;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 
@@ -43,7 +43,7 @@ class AjaxController extends Controller {
 		$appointmentsDetails = Appointment::select('employee_id')
         ->groupBy('employee_id');
 
-        $user = \App\User::find(auth()->id());
+        $user = \App\Models\User::find(auth()->id());
         $EmpEmployee_id = $user['employee_id'];
 
 		$query = Employee::joinSub($appointmentsDetails, 'appointments', function ($join) {
@@ -95,7 +95,7 @@ class AjaxController extends Controller {
 	public function stageActionOparation($id, $actionName, $stage, $module = 'requisition') {
 		$requisitions = (object) [];
 		if ($actionName == 'validate' && $module == 'requisition') {
-			$requisitions = \App\Requisition::select(
+			$requisitions = \App\Models\Requisition::select(
 				'last_three_months_avg_sales',
 				'average_sales',
 				'last_three_months_avg_sales_real',
@@ -159,7 +159,7 @@ class AjaxController extends Controller {
 			$months = 'settlements.month_from';
 		}
 
-		$query = \App\Settlement::select(
+		$query = \App\Models\Settlement::select(
 			'settlements.id',
 			'settlements.item_id',
 			'settlements.shop_id',
@@ -203,7 +203,7 @@ class AjaxController extends Controller {
 	}
 
 	public function closedList($param) {
-		$query = \App\Settlement::select(
+		$query = \App\Models\Settlement::select(
 			'settlements.id',
 			'settlements.item_id',
 			'settlements.shop_id',
@@ -258,7 +258,7 @@ class AjaxController extends Controller {
 			'avatar' => 'mimes:jpeg,jpg,png|max:1024',
 		]);
 
-		$user = \App\User::find(auth()->id());
+		$user = \App\Models\User::find(auth()->id());
 		$old_image = $user->avatar;
 		$upload = $request->file('avatar');
 		$directory = '../public' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'avatar' . DIRECTORY_SEPARATOR;

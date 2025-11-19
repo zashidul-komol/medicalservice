@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Employee;
-use App\ChiefComplain;
-use App\Appointment;
-use App\Medicine;
-use App\Location;
-use App\Department;
-use App\Designation;
-use App\Organization;
-use App\OfficeLocation;
-use App\Region;
-use App\Country;
+use App\Models\Employee;
+use App\Models\ChiefComplain;
+use App\Models\Appointment;
+use App\Models\Medicine;
+use App\Models\Location;
+use App\Models\Department;
+use App\Models\Designation;
+use App\Models\Organization;
+use App\Models\OfficeLocation;
+use App\Models\Region;
+use App\Models\Country;
 use Auth;
 use Carbon\Carbon;
 use App\Traits\PhpExcelFormater;
@@ -28,7 +28,7 @@ class AppointmentsController extends Controller
      */
     public function index()
     {
-        $user = \App\User::find(auth()->id());
+        $user = \App\Models\User::find(auth()->id());
         $appointments = Appointment::with([
             'employees' => function ($q) {
                 return $q->select('*');
@@ -191,7 +191,7 @@ class AppointmentsController extends Controller
      */
 
     public function prescriptionDownload($id) {
-        $user = \App\User::find(auth()->id());
+        $user = \App\Models\User::find(auth()->id());
         $appointmentsDetails = Appointment::with([
             'employees' => function ($q) {
                 return $q->select('id', 'name', 'polar_id', 'gender', 'birthdate', 'bloodgroup');

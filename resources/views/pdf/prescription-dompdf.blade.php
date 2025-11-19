@@ -224,13 +224,13 @@
                         @foreach ($MedicineDetails as $key=>$data)
                           <tr>
                             <td align="left" width="5%">{{$i}}.</td>
-                            <td align="left" width="95%">{{ $data->medicine_name or '' }}</td>
+                            <td align="left" width="95%">{{ $data->medicine_name ?? '' }}</td>
                                    
                           </tr>
                           <tr>
                             <td align="left" width="5%"></td>
-                            <td align="left" width="55%">{{$data->when_take_medicine or ''}} -- {{ $data->suggetions or '' }}</td>
-                            <td align="right" width="30%"> - {{$data->medicine_duration or ''}}</td>
+                            <td align="left" width="55%">{{$data->when_take_medicine ?? ''}} -- {{ $data->suggetions ?? '' }}</td>
+                            <td align="right" width="30%"> - {{$data->medicine_duration ?? ''}}</td>
                             <td align="right" width="10%"></td>
                           </tr>
                           @php ($i=$i+1)

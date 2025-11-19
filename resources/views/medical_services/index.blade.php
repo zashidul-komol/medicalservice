@@ -37,14 +37,14 @@
                         @foreach ($appointments as $data)
                       <tr>
                         <td>{{$i}}</td>
-                        <td>{{$data->employees->name or ''}}</td>
-                        <td>{{$data->employees->designation->title or ''}}</td>
+                        <td>{{$data->employees->name ?? ''}}</td>
+                        <td>{{$data->employees->designation->title ?? ''}}</td>
                         <td>{{ $data->employees && $data->employees->birthdate 
                             ? \Carbon\Carbon::parse($data->employees->birthdate)->diff(\Carbon\Carbon::now())->format('%y Years') 
                             : '' }}</td>
-                        <td>{{$data->polar_id or ''}}</td>
-                        <td>{{$data->appointment_date or ''}}</td>
-                        <td>{{$data->prescription_no or ''}}</td>
+                        <td>{{$data->polar_id ?? ''}}</td>
+                        <td>{{$data->appointment_date ?? ''}}</td>
+                        <td>{{$data->prescription_no ?? ''}}</td>
                         <td>
                             <p>
                             {{ $data->chief_complains_names }}

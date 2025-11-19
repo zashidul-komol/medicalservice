@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Report;
 
-use App\DamageType;
+use App\Models\DamageType;
 use App\Exports\ComplainExport;
 use App\Exports\PrescriptionHistoryExport;
 use App\Http\Controllers\Controller;
-use App\ProblemType;
-use App\Organization;
-use App\Employee;
-use App\ChiefComplain;
-use App\Appointment;
+use App\Models\ProblemType;
+use App\Models\Organization;
+use App\Models\Employee;
+use App\Models\ChiefComplain;
+use App\Models\Appointment;
 use App\Repositories\Models\DamageApplicationRepository;
 use App\Repositories\Models\DepotRepository;
 use App\Repositories\Models\DfProblemRepository;
@@ -76,7 +76,7 @@ class ServiceReportsController extends Controller {
 	}
 
 	
-	public function prescriptionHistory($param = 0, Request $request) {
+	public function prescriptionHistory(Request $request, $param = 0) {
 
         //dd($request->toArray());
       

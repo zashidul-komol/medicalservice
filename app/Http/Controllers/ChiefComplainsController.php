@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\ChiefComplain;
+use App\Models\ChiefComplain;
 use Illuminate\Http\Request;
 
 class ChiefComplainsController extends Controller

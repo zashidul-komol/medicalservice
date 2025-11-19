@@ -1,27 +1,27 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Allocation;
-use App\Employee;
-use App\BusinessMeet;
-use App\Participation;
-use App\Location;
-use App\Designation;
-use App\JobExperiance;
-use App\User;
-use App\DamageApplication;
-use App\Depot;
-use App\DepotUser;
-use App\DfProblem;
-use App\DfReturn;
-use App\Item;
-use App\Requisition;
-use App\Role;
-use App\Shop;
-use App\Stock;
-use App\StockTransfer;
+use App\Models\Allocation;
+use App\Models\Employee;
+use App\Models\BusinessMeet;
+use App\Models\Participation;
+use App\Models\Location;
+use App\Models\Designation;
+use App\Models\JobExperiance;
+use App\Models\User;
+use App\Models\DamageApplication;
+use App\Models\Depot;
+use App\Models\DepotUser;
+use App\Models\DfProblem;
+use App\Models\DfReturn;
+use App\Models\Item;
+use App\Models\Requisition;
+use App\Models\Role;
+use App\Models\Shop;
+use App\Models\Stock;
+use App\Models\StockTransfer;
 use App\Traits\HasStageExists;
-use App\Zone;
+use App\Models\Zone;
 use DB;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -611,11 +611,20 @@ class HomeController extends Controller {
         ->get();
         //$district = $employees[0];
 
+		$divisionId = $employees[0]->division_id ?? null;
+		if ($divisionId && is_array($divisionId)) {
+			$divisionId = $divisionId[0];
+		}
+
+		$districtId = $employees[0]->district_id ?? null;
+		if ($districtId && is_array($districtId)) {
+			$districtId = $districtId[0];
+		}
         $divisions = Location::whereNull('parent_id')->pluck('name', 'id');
         //dd($divisions);
-        $districts = Location::where('parent_id', $employees[0]->division_id[0])->pluck('name', 'id');
+        $districts = Location::where('parent_id', $divisionId)->pluck('name', 'id');
         //dd($districts);
-        $thanas = Location::where('parent_id', $employees[0]->district_id[0])->pluck('name', 'id');
+        $thanas = Location::where('parent_id', $districtId)->pluck('name', 'id');
         //dd($employees->toArray());  
       	//$user_id = auth()->user('id');
       	//$UId['employee_id']	= $user_id['employee_id'];
@@ -647,7 +656,7 @@ class HomeController extends Controller {
      */
     public function contactDirectories()
     {
-        $user = \App\User::find(auth()->id());
+        $user = \App\Models\User::find(auth()->id());
         //dd($user->toArray());
         $Organization_id = $user['organization_id'];
         //dd($Organization_id);
@@ -756,7 +765,7 @@ class HomeController extends Controller {
 
 	public function participantlist()
     {
-        $user = \App\User::find(auth()->id());
+        $user = \App\Models\User::find(auth()->id());
         //dd($user->toArray());
         $Organization_id = $user['organization_id'];
         //dd($Organization_id);

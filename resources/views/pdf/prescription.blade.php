@@ -517,15 +517,15 @@
                                 <td width="7%"></td>
                                 <td width="6%">{{$i}}.</td>
                                 <td width="2%"></td>
-                                <td width="60%">{{ $data->medicine_name or '' }}</td>
+                                <td width="60%">{{ $data->medicine_name ?? '' }}</td>
                                 <td width="25%"></td>
                             </tr>
                             <tr>
                                 <td width="7%"></td>
                                 <td width="6%"></td>
                                 <td width="2%"></td>
-                                <td width="60%">{{$data->when_take_medicine or ''}} -- {{ $data->suggetions or '' }}</td>
-                                <td width="25%">- {{$data->medicine_duration or ''}}</td>
+                                <td width="60%">{{$data->when_take_medicine ?? ''}} -- {{ $data->suggetions ?? '' }}</td>
+                                <td width="25%">- {{$data->medicine_duration ?? ''}}</td>
                             </tr>
                             <tr>
                                 <td colspan="5"></td>
@@ -569,7 +569,7 @@
                                 <td colspan="5"></td>
                             </tr>
                             <tr>
-                                <td colspan="5">{{$appointmentsDetails[0]->basic_treatment or ''}}</td>
+                                <td colspan="5">{{$appointmentsDetails[0]->basic_treatment ?? ''}}</td>
                             </tr> 
                             <tr>
                                 <td colspan="5"></td>
@@ -578,7 +578,7 @@
                                 <td colspan="5"></td>
                             </tr>
                             <tr>
-                                <td colspan="5">{{$appointmentsDetails[0]->refer_other or ''}}</td>
+                                <td colspan="5">{{$appointmentsDetails[0]->refer_other ?? ''}}</td>
                             </tr> 
                             <tr>
                                 <td colspan="5"></td>
@@ -587,7 +587,7 @@
                                 <td colspan="5"></td>
                             </tr>
                             <tr>
-                                <td colspan="5">{{$appointmentsDetails[0]->refer_reason or ''}}</td>
+                                <td colspan="5">{{$appointmentsDetails[0]->refer_reason ?? ''}}</td>
                             </tr>
                         </table>
                     </td>

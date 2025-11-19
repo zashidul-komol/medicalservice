@@ -35,12 +35,12 @@
                         @php ($i=1)
                         @foreach ($results as $data)
                       <tr>
-                        <td>{{$data->employees->name or ''}}</td>
-                        <td>{{$data->wife_name or ''}}</td>
-                        <td>{{$data->employees->designation->title or ''}}</td>
-                        <td>{{$data->employees->department->name or ''}}</td>
-                        <td>{{$data->employees->mobile or ''}}</td>
-                        <td>{{$data->marriage_date or ''}}</td>
+                        <td>{{$data->employees->name ?? ''}}</td>
+                        <td>{{$data->wife_name ?? ''}}</td>
+                        <td>{{$data->employees->designation->title ?? ''}}</td>
+                        <td>{{$data->employees->department->name ?? ''}}</td>
+                        <td>{{$data->employees->mobile ?? ''}}</td>
+                        <td>{{$data->marriage_date ?? ''}}</td>
                       </tr>
                         @php ($i=$i+1)
                         @endforeach
