@@ -85,7 +85,7 @@ class ServiceReportsController extends Controller {
         $start_date = '01-'.date('m-Y');
         $end_date_To = Carbon::now()->format('d-m-Y');
         $authUserId = auth()->user()->id;
-        //dd($end_date);
+        $end_date = $end_date_To;
         $organizations = Organization::pluck('short_name','id');
         $ChiefComplains = ChiefComplain::pluck('name','id');
 
