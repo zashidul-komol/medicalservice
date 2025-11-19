@@ -90,6 +90,7 @@ class ServiceReportsController extends Controller {
         $ChiefComplains = ChiefComplain::pluck('name','id');
 
 		$employee_types = [];
+		$employeeTypes = [];
         $reportData = [];
         $is_download = 0;
 
