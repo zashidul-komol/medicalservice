@@ -161,36 +161,47 @@ class RolesController extends Controller {
             'HomeController',
             'LoginController',
         ];
-        $allRoutes = Route::getRoutes();
-        //dd($allRoutes);
-        $controllers = array();
-        foreach ($allRoutes as $route) {
+        
+        $controllers = [];
+
+        foreach (Route::getRoutes() as $route) {
             $action = $route->getAction();
-            if (array_key_exists('controller', $action)) {
-                $controllerAction = explode('@', $action['controller']);
-                $controllers[class_basename($controllerAction[0])][$controllerAction[1]] = $controllerAction[1];
+            
+            if (!isset($action['controller'])) {
+                continue;
+            }
+
+            $controllerString = $action['controller'];
+            
+            // Skip closures
+            if ($controllerString === 'Closure') {
+                continue;
+            }
+
+            // Safely extract controller and method
+            $parts = explode('@', $controllerString);
+            $controllerName = class_basename($parts[0] ?? '');
+            $methodName = $parts[1] ?? '__invoke';
+
+            if ($controllerName && $methodName) {
+                $controllers[$controllerName][$methodName] = $methodName;
             }
         }
 
-        // permission not need for this following controlles
-        foreach ($omitArrLists as $key => $value) {
-            if (array_key_exists($value, $controllers)) {
-                unset($controllers[$value]);
-            }
-        }
-        //dd($controllers);
-        foreach ($controllers as $key => $controller) {
-            $data['name'] = $key;
-            $parent = Permission::firstOrCreate($data);
-            if ($parent) {
-                $data2['parent_id'] = $parent->id;
-                foreach ($controller as $elements) {
-                    $data2['name'] = $elements;
-                    $all_done = Permission::firstOrCreate($data2);
-                }
-            }
-        }
+        // Filter out omitted controllers
+        $controllers = array_diff_key($controllers, array_flip($omitArrLists));
 
+        // Create permissions
+        foreach ($controllers as $controllerName => $methods) {
+            $parent = Permission::firstOrCreate(['name' => $controllerName]);
+            
+            foreach ($methods as $methodName) {
+                Permission::firstOrCreate([
+                    'parent_id' => $parent->id,
+                    'name' => $methodName
+                ]);
+            }
+        }
     }
 
 }
