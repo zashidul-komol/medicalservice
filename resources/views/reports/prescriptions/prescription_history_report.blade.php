@@ -31,7 +31,7 @@
                         <td>{{$data->organization}}</td>
                         <td>{{$data->prescription_no}}</td>
                         <td>{{$data->appointment_date}}</td>
-                        <td>{{$data->chiefComplain}}</td>
+                        <td>{{$data->chiefComplainNames}}</td>
                         <td>{{$data->employee_type}}</td>
                         
                         {!! $download_column_val !!}

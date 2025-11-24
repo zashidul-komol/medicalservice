@@ -24,7 +24,7 @@ class AppointmentsRepository extends Repository {
 		return $this->model->all();
 	}
 
-	public function prescriptionHistory($start_date, $end_date, $organization_id = [], $employee_types = [], $ChiefComplains = [], $chiefComplain_id = []) {
+public function prescriptionHistory($start_date, $end_date, $organization_id = [], $employee_types = [], $ChiefComplains = [], $chiefComplain_id = []) {
 
     $start_date = !empty($start_date) 
         ? Carbon::parse($start_date)->format('Y-m-d') 
@@ -34,17 +34,12 @@ class AppointmentsRepository extends Repository {
         ? Carbon::parse($end_date)->format('Y-m-d') 
         : Carbon::now()->format('Y-m-d');
 
-    $appointments = $this->model
+    // Use DB query builder instead of Eloquent to avoid model casting
+    $appointments = DB::table('appointments')
         ->join('employees', 'employees.id', '=', 'appointments.employee_id')
         ->join('organizations', 'organizations.id', '=', 'appointments.organization_id')
-        // Convert JSON array into rows
-        ->leftJoin(DB::raw("
-            JSON_TABLE(appointments.chief_complain_id, '$[*]' 
-                COLUMNS (cid INT PATH '$')
-            ) AS ccjson
-        "), 'ccjson.cid', '=', DB::raw('1')) // We'll join later with chief_complains
-        ->leftJoin('chief_complains', 'chief_complains.id', '=', DB::raw('ccjson.cid'))
         ->select(
+            'appointments.id',
             'appointments.employee_id',
             'appointments.chief_complain',
             'appointments.chief_complain_id',
@@ -53,28 +48,15 @@ class AppointmentsRepository extends Repository {
             'appointments.appointment_date',
             'appointments.employee_type',
             'employees.name as EmployeeName',
-            'organizations.organization',
-            DB::raw('GROUP_CONCAT(chief_complains.name) as chiefComplain')
-        )
-        ->whereRaw('DATE(appointments.appointment_date) BETWEEN ? AND ?', [$start_date, $end_date])
-        ->groupBy(
-            'appointments.employee_id',
-            'appointments.chief_complain',
-            'appointments.chief_complain_id',
-            'appointments.organization_id',
-            'appointments.prescription_no',
-            'appointments.appointment_date',
-            'appointments.employee_type',
-            'employees.name',
             'organizations.organization'
-        );
+        )
+        ->whereBetween('appointments.appointment_date', [$start_date, $end_date]);
 
-    // Filter by employee types
+    // Apply filters
     if (!empty($employee_types)) {
         $appointments->whereIn('appointments.employee_type', $employee_types);
     }
 
-    // Filter by chief complain IDs
     if (!empty($chiefComplain_id)) {
         $appointments->where(function($q) use ($chiefComplain_id) {
             foreach ($chiefComplain_id as $id) {
@@ -83,12 +65,46 @@ class AppointmentsRepository extends Repository {
         });
     }
 
-    // Filter by organization IDs
     if (!empty($organization_id)) {
         $appointments->whereIn('appointments.organization_id', $organization_id);
     }
 
-    return $appointments->get();
+    $results = $appointments->get();
+
+    // Get all chief complain IDs from all appointments
+    $allChiefComplainIds = [];
+    foreach ($results as $appointment) {
+        if ($appointment->chief_complain_id) {
+            $ids = json_decode($appointment->chief_complain_id, true);
+            if (is_array($ids)) {
+                $allChiefComplainIds = array_merge($allChiefComplainIds, $ids);
+            }
+        }
+    }
+    $allChiefComplainIds = array_unique($allChiefComplainIds);
+
+    // Get all chief complain names in one query
+    $chiefComplains = \App\Models\ChiefComplain::whereIn('id', $allChiefComplainIds)
+        ->pluck('name', 'id')
+        ->toArray();
+
+    // Add chief complain names to each appointment
+    foreach ($results as $appointment) {
+        $names = [];
+        if ($appointment->chief_complain_id) {
+            $ids = json_decode($appointment->chief_complain_id, true);
+            if (is_array($ids)) {
+                foreach ($ids as $id) {
+                    if (isset($chiefComplains[$id])) {
+                        $names[] = $chiefComplains[$id];
+                    }
+                }
+            }
+        }
+        $appointment->chiefComplainNames = implode(', ', $names);
+    }
+
+    return $results;
 }
 
 
