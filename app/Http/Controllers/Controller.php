@@ -24,7 +24,7 @@ class Controller extends BaseController {
 					->where('role_id', $request->user()->role_id)
 					->get()
 					->toArray();
-					//dd($rolePermissions);
+
 				$controllerArr = [];
 				$allIndexes = [];
 				foreach ($rolePermissions as $key => $value) {

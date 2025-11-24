@@ -77,6 +77,12 @@
                      @endif
                     <!-- =============Requisition Module end============-->
 
+                    <!-- ==========Medical Service Module start===================-->
+                    @if(isMenuRender(config('myconfig.menu.medical'),$controller_list))
+                        @include('common_pages.menu_modules.medical')
+                     @endif
+                    <!-- =============Medical Service Module end============-->
+
                     <!-- ==============Rport Module start====================-->
                     @if(isMenuRender(config('myconfig.menu.report'),$controller_list))
                         @include('common_pages.menu_modules.report')

@@ -77,12 +77,19 @@
 							    </label>
 							</div>
 							<div class="action-wraper">
-								@foreach ($parent['children'] as $child)
-								  <div class="checkbox actions" style="margin-left:20px;">
-								    <label><input name="permissions[]" class="{{ $parent['name'] }}" type="checkbox" <?php echo in_array($child['id'], $checkPermissions) ? "checked='true'" : ""; ?> value="{{ $child['id'] }}" onChange="permission_select_parent('{{ $parent['name'] }}')"> {{ mystudy_case(snake_case($child['name'])) }}</label>
-								  </div>
-								@endforeach
-							</div>
+						    @foreach ($parent['children'] as $child)
+						      <div class="checkbox actions" style="margin-left:20px;">
+						        <label>
+						            <input name="permissions[]" class="{{ $parent['name'] }}" 
+						                   type="checkbox" 
+						                   {{ in_array($child['id'], $checkPermissions) ? "checked='true'" : "" }}
+						                   value="{{ $child['id'] }}" 
+						                   onChange="permission_select_parent('{{ $parent['name'] }}')"> 
+						            {{ mystudy_case(Str::snake($child['name'])) }}
+						        </label>
+						      </div>
+						    @endforeach
+						</div>
 						</div>
 					@endforeach
 				</div>
