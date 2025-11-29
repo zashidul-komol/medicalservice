@@ -7,11 +7,14 @@
 /public/css/app.css
 /public/storage
 
+
 # Storage and keys
 /storage/*
 !.gitignore       # Keep the .gitignore file itself
 /storage/*.key    # Ignore key files inside storage
 
+/storage/logs/*
+/storage/debugbar/*
 # Vendor libraries
 /vendor
 
