@@ -87,11 +87,9 @@ class AppointmentsController extends Controller
         
         $data = $request->except('_token');
         $authUser  = auth()->user()->id ;
-        $EmployeeInfo = Employee::where('id', $data['employee_id'])->select('organization_id', 'employee_type' )
-        ->get();
-
-        $Emp_Org = $EmployeeInfo[0]->organization_id;
-        $Emp_type = $EmployeeInfo[0]->employee_type;
+        $EmployeeInfo = Employee::find($data['employee_id']);
+        $Emp_Org = $EmployeeInfo->organization_id;
+        $Emp_type = $EmployeeInfo->employee_type;
         
         $appointment_Request_data = $request->except('details', '_method', '_token');
         $appointmentDetailsRequest_Data = $request->only('details');

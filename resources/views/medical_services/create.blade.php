@@ -195,11 +195,95 @@ textarea:valid {
                         </div>
                         @endif
 
-                        @if(request()->old('details'))
-                            <stockdetails :brands="{{ $countries }}" :sizes="{{ $countries }}" :details="{{ collect(request()->old('details')) }}"/>
-                        @else
-                            <stockdetails :brands="{{ $countries }}" :sizes="{{ $countries }}" :details="[]"/>
-                        @endif
+                        
+
+
+
+                        <div>       
+                            <div class="row">
+                                <div class="col-md-8 text-right mb-sm">
+                                    <span id="total-items">Total Items type: 1 and Total Items: 0</span>
+                                </div>
+                            </div>
+                            
+                            <ul id="stock-add">
+                                @php
+                                    $oldDetails = request()->old('details', []);
+                                    $hasOldData = !empty($oldDetails);
+                                @endphp
+                                
+                                @if($hasOldData)
+                                    {{-- Show old data if exists --}}
+                                    @foreach($oldDetails as $index => $detail)
+                                    <li class="mb-sm">
+                                        <div class="row"> 
+                                            <div class="col-md-3">
+                                                <input class="col-md-1 form-control" placeholder="Name of Medicine" 
+                                                    name="details[{{ $index }}][medicine_name]" 
+                                                    value="{{ $detail['medicine_name'] ?? '' }}" min="0">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input class="col-md-1 form-control" placeholder="Time to take medicine" 
+                                                    name="details[{{ $index }}][when_take_medicine]" 
+                                                    value="{{ $detail['when_take_medicine'] ?? '' }}" min="0">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input class="col-md-2 form-control" placeholder="Days" 
+                                                    name="details[{{ $index }}][medicine_duration]" 
+                                                    value="{{ $detail['medicine_duration'] ?? '' }}" min="0">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input class="col-md-2 form-control" placeholder="Suggestions" 
+                                                    name="details[{{ $index }}][suggetions]" 
+                                                    value="{{ $detail['suggetions'] ?? '' }}" min="0">
+                                            </div>
+                                            <div class="col-md-2">        
+                                                @if($index > 0)
+                                                    <button type="button" class="btn btn-danger delete-row">Delete</button>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </li>
+                                    @endforeach
+                                @else
+                                    {{-- Show empty form if no old data --}}
+                                    <li class="mb-sm">
+                                        <div class="row"> 
+                                            <div class="col-md-3">
+                                                <input class="col-md-1 form-control" placeholder="Name of Medicine" 
+                                                    name="details[0][medicine_name]" value="" min="0">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input class="col-md-1 form-control" placeholder="Time to take medicine" 
+                                                    name="details[0][when_take_medicine]" value="" min="0">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input class="col-md-2 form-control" placeholder="Days" 
+                                                    name="details[0][medicine_duration]" value="" min="0">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input class="col-md-2 form-control" placeholder="Suggestions" 
+                                                    name="details[0][suggetions]" value="" min="0">
+                                            </div>
+                                            <div class="col-md-2">        
+                                                {{-- First row doesn't have delete button --}}
+                                            </div>
+                                        </div>
+                                    </li>
+                                @endif
+                            </ul>
+                            
+                            <div class="row">
+                                <div class="col-md-offset-10 col-md-8">
+                                    <button type="button" class="btn btn-success" id="add-more-btn">Add More</button>
+                                </div>           
+                            </div>        
+                        </div>
+
+
+
+
+
                     </div>
                 </div>
                 <!-- /.form-horizontal -->
@@ -293,7 +377,75 @@ textarea:valid {
         });
     } 
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let rowCount = {{ $hasOldData ? count($oldDetails) : 1 }};
+    const stockAdd = document.getElementById('stock-add');
+    const addMoreBtn = document.getElementById('add-more-btn');
+    const totalItemsSpan = document.getElementById('total-items');
+    
+    // Add new row
+    addMoreBtn.addEventListener('click', function() {
+        const newRow = document.createElement('li');
+        newRow.className = 'mb-sm';
+        newRow.innerHTML = `
+            <div class="row"> 
+                <div class="col-md-3">
+                    <input class="col-md-1 form-control" placeholder="Name of Medicine" name="details[${rowCount}][medicine_name]" value="" min="0">
+                </div>
+                <div class="col-md-2">
+                    <input class="col-md-1 form-control" placeholder="Time to take medicine" name="details[${rowCount}][when_take_medicine]" value="" min="0">
+                </div>
+                <div class="col-md-2">
+                    <input class="col-md-2 form-control" placeholder="Days" name="details[${rowCount}][medicine_duration]" value="" min="0">
+                </div>
+                <div class="col-md-3">
+                    <input class="col-md-2 form-control" placeholder="Suggestions" name="details[${rowCount}][suggetions]" value="" min="0">
+                </div>
+                <div class="col-md-2">        
+                    <button type="button" class="btn btn-danger delete-row">Delete</button>
+                </div>
+            </div>
+        `;
+        
+        stockAdd.appendChild(newRow);
+        rowCount++;
+        updateTotalItems();
+        
+        // Add delete event to new button
+        newRow.querySelector('.delete-row').addEventListener('click', function() {
+            newRow.remove();
+            updateTotalItems();
+        });
+    });
+    
+    // Add delete events to existing buttons (for old data)
+    document.querySelectorAll('.delete-row').forEach(button => {
+        button.addEventListener('click', function() {
+            this.closest('li').remove();
+            updateTotalItems();
+        });
+    });
+    
+    // Update total items count
+    function updateTotalItems() {
+        const totalRows = document.querySelectorAll('#stock-add li').length;
+        totalItemsSpan.textContent = `Total Items type: ${totalRows} and Total Items: ${totalRows}`;
+    }
+    
+    // Initial update
+    updateTotalItems();
+});
+</script>
 @slot('css')
+#stock-add{
+        list-style: none;
+        padding: 0;
+    }    
+    .mb-sm {
+        margin-bottom: 10px;
+    }
  <!--Date picker-->
  <link rel="stylesheet" href="{{ asset('vendor/bootstrap_date-picker/css/bootstrap-datepicker3.min.css') }}">
 @endslot
