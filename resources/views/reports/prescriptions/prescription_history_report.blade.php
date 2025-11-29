@@ -30,7 +30,7 @@
                         <td>{{$data->EmployeeName}}</td>
                         <td>{{$data->organization}}</td>
                         <td>{{$data->prescription_no}}</td>
-                        <td>{{$data->appointment_date}}</td>
+                        <td>{{$data->appointment_date ? \PhpOffice\PhpSpreadsheet\Shared\Date::dateTimeToExcel(date_create($data->appointment_date)) : '' }}</td>
                         <td>{{$data->chiefComplainNames}}</td>
                         <td>{{$data->employee_type}}</td>
                         
