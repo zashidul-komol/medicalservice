@@ -38,3 +38,6 @@ yarn-error.log
 composer.lock
 package-lock.json
 yarn.lock
+/storage/*
+!/storage/app/public/
+!/storage/app/public/.gitignore
